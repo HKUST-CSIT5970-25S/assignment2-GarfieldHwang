@@ -54,7 +54,7 @@ public class BigramFrequencyStripes extends Configured implements Tool {
 			/*
 			 * TODO: Your implementation goes here.
 			 */
-			java.util.HashMap<String, HashMapStringIntWritable> localStripes = new java.util.HashMap<>();
+			java.util.HashMap<String, HashMapStringIntWritable> localStripes = new java.util.HashMap<String, HashMapStringIntWritable>();
 			for (int i = 0; i < words.length - 1; i++) {
 				String left = words[i];
 				String right = words[i + 1];

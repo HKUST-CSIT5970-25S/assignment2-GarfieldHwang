@@ -16,6 +16,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.WritableComparable;
+import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -143,6 +145,18 @@ public class BigramFrequencyPairs extends Configured implements Tool {
 		}
 	}
 
+	public static class MyGroupComparator extends WritableComparator {
+	    protected MyGroupComparator() {
+	        super(PairOfStrings.class, true);
+	    }
+	    @Override
+	    public int compare(WritableComparable w1, WritableComparable w2) {
+	        PairOfStrings p1 = (PairOfStrings) w1;
+	        PairOfStrings p2 = (PairOfStrings) w2;
+	        return p1.getLeftElement().compareTo(p2.getLeftElement());
+	    }
+	}
+
 	/**
 	 * Creates an instance of this tool.
 	 */
@@ -203,6 +217,7 @@ public class BigramFrequencyPairs extends Configured implements Tool {
 		Job job = Job.getInstance(conf);
 		job.setJobName(BigramFrequencyPairs.class.getSimpleName());
 		job.setJarByClass(BigramFrequencyPairs.class);
+		job.setGroupingComparatorClass(MyGroupComparator.class);
 
 		job.setNumReduceTasks(reduceTasks);
 

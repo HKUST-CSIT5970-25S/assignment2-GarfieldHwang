@@ -85,7 +85,7 @@ public class CORStripes extends Configured implements Tool {
 			 * TODO: Your implementation goes here.
 			 */
 			// 将去重后的单词转换为列表，以便按索引遍历
-			List<String> wordList = new ArrayList<String>(distinctWords);
+			List<String> wordList = new ArrayList<String>(sorted_word_set);
 			// 对每个单词 A，构造 stripe：所有在 A 后的单词 B（保证 A < B）
 			for (int i = 0; i < wordList.size(); i++) {
 				String A = wordList.get(i);

@@ -145,15 +145,28 @@ public class BigramFrequencyPairs extends Configured implements Tool {
 		}
 	}
 
-	public static class MyGroupComparator extends WritableComparator {
-	    protected MyGroupComparator() {
+	public static class MySortComparator extends WritableComparator {
+	    protected MySortComparator() {
 	        super(PairOfStrings.class, true);
 	    }
+	    
 	    @Override
-	    public int compare(WritableComparable w1, WritableComparable w2) {
-	        PairOfStrings p1 = (PairOfStrings) w1;
-	        PairOfStrings p2 = (PairOfStrings) w2;
-	        return p1.getLeftElement().compareTo(p2.getLeftElement());
+	    public int compare(WritableComparable a, WritableComparable b) {
+	        PairOfStrings p1 = (PairOfStrings) a;
+	        PairOfStrings p2 = (PairOfStrings) b;
+	        // 首先按左元素排序
+	        int cmp = p1.getLeftElement().compareTo(p2.getLeftElement());
+	        if (cmp != 0) {
+	            return cmp;
+	        }
+	        // 如果左元素相同，确保右元素为"*"的记录排在前面
+	        if (p1.getRightElement().equals("*") && !p2.getRightElement().equals("*")) {
+	            return -1;
+	        } else if (!p1.getRightElement().equals("*") && p2.getRightElement().equals("*")) {
+	            return 1;
+	        } else {
+	            return p1.getRightElement().compareTo(p2.getRightElement());
+	        }
 	    }
 	}
 
@@ -217,7 +230,7 @@ public class BigramFrequencyPairs extends Configured implements Tool {
 		Job job = Job.getInstance(conf);
 		job.setJobName(BigramFrequencyPairs.class.getSimpleName());
 		job.setJarByClass(BigramFrequencyPairs.class);
-		job.setGroupingComparatorClass(MyGroupComparator.class);
+		job.setSortComparatorClass(MySortComparator.class);
 
 		job.setNumReduceTasks(reduceTasks);
 
